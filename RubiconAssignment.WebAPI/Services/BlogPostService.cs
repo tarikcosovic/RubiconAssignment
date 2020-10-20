@@ -29,8 +29,7 @@ namespace RubiconAssignment.WebAPI.Services
 
             var result = await db.BlogPosts.Include(k => k.Tags).OrderByDescending(k => k.CreatedAt).ToListAsync();
 
-            //We should make a Query object instead of a string for querying, but since its just the tag I kept it simple
-            if (!string.IsNullOrWhiteSpace(tag))
+            if (!string.IsNullOrWhiteSpace(tag))//Should use query, but since its just the tag I kept it simple
                 result = await db.BlogPostTags.Where(x => x.TagId == tag).Select(k => k.BlogPost).ToListAsync();
 
             var posts = mapper.Map<List<BlogPostVM>>(result);
@@ -105,8 +104,9 @@ namespace RubiconAssignment.WebAPI.Services
 
             var blogPost = await db.BlogPosts.Include(x => x.Tags).FirstOrDefaultAsync(bp => bp.Slug == slug) ?? throw new NotFoundException(slug);
 
-            //If Title has been changed
-            if(request.Title != blogPost.Title && !string.IsNullOrEmpty(request.Title))
+            #region IfTitleHasChanged
+
+            if (request.Title != blogPost.Title && !string.IsNullOrEmpty(request.Title))
             {
                 var tags = new List<BlogPostTag>(blogPost.Tags);
                 //Delete all referenced entities
@@ -134,6 +134,7 @@ namespace RubiconAssignment.WebAPI.Services
 
                 blogPost.Tags = tags;
             }
+            #endregion
 
             blogPost.UpdatedAt = DateTime.UtcNow;
             mapper.Map(request, blogPost);
