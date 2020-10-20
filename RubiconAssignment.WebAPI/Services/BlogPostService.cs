@@ -23,7 +23,7 @@ namespace RubiconAssignment.WebAPI.Services
             tagService = _tagService;
         }
 
-        public async Task<MultipleBlogPostsVM> Get(string tag = "")
+        public async Task<MultipleBlogPostsVM> Get(string tag = null)
         {
             using var db = new SQLiteDBContext();
 

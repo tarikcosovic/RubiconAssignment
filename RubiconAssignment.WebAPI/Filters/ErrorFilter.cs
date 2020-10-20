@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using RubiconAssignment.WebAPI.Exceptions;
 using System.Net;
 
@@ -19,6 +20,8 @@ namespace RubiconAssignment.WebAPI.Filters
                     Error = "Client-Side Error",
                     Message = context.Exception.Message,
                 };
+
+                context.HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
             }
             else
             {
@@ -28,6 +31,8 @@ namespace RubiconAssignment.WebAPI.Filters
                     Error = "Server-Side Error",
                     Message = context.Exception.Message,
                 };
+
+                context.HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             }
 
             context.Result = new JsonResult(response);
