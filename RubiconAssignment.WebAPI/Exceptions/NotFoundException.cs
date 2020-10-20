@@ -7,7 +7,7 @@ namespace RubiconAssignment.WebAPI.Exceptions
 {
     public class NotFoundException : Exception
     {
-        public NotFoundException(string id) : base("Resource not found! id: " + id)
+        public NotFoundException(string id) : base("Resource not found with Slug: " + id)
         {
 
         }

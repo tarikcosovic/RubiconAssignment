@@ -2,6 +2,7 @@
 using RubiconAssignment.Model;
 using RubiconAssignment.WebAPI.ViewModels;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RubiconAssignment.WebAPI.Mapper
 {
@@ -9,14 +10,17 @@ namespace RubiconAssignment.WebAPI.Mapper
     {
         public MyMapper()
         {
-            CreateMap<BlogPost, BlogPostVM>();
-            CreateMap<BlogPostVM, BlogPost>();
+            CreateMap<BlogPost, BlogPostVM>().
+                ForMember(x => x.TagList, opt => opt.MapFrom(k => k.Tags.Select(tg => tg.TagId).ToArray())).
+                ReverseMap();
 
             CreateMap<BlogPostUpdateVM, BlogPost>().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<BlogPost, BlogPostUpdateVM>();
 
-            CreateMap<BlogPost, BlogPostAddVM>();
-            CreateMap<BlogPostAddVM, BlogPost>().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<BlogPost, BlogPostAddVM>().
+                ForMember(x => x.TagList, opt => opt.MapFrom(k => k.Tags.Select(tg => tg.TagId).ToArray())).
+                ReverseMap().
+                ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         }
     }
 }

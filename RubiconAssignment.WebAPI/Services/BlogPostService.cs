@@ -34,8 +34,6 @@ namespace RubiconAssignment.WebAPI.Services
 
             var posts = mapper.Map<List<BlogPostVM>>(result);
 
-            ListToArray(result, posts);
-
             var multiplePosts = new MultipleBlogPostsVM()
             {
                 BlogPosts = posts.ToArray(),
@@ -51,8 +49,6 @@ namespace RubiconAssignment.WebAPI.Services
             var result = await db.BlogPosts.Include(bp => bp.Tags).FirstOrDefaultAsync(k => k.Slug == slug) ?? throw new NotFoundException(slug);
 
             var post = mapper.Map<BlogPostVM>(result);
-
-            TagListToArray(result, post);
 
             return post;
         }
@@ -143,7 +139,6 @@ namespace RubiconAssignment.WebAPI.Services
             await db.SaveChangesAsync();
 
             var response = mapper.Map<BlogPostVM>(blogPost);
-            TagListToArray(blogPost, response);
 
             return response;
         }
@@ -157,32 +152,6 @@ namespace RubiconAssignment.WebAPI.Services
             await db.SaveChangesAsync();
 
             return true;
-        }
-
-        private void ListToArray(List<BlogPost> from, List<BlogPostVM> to)
-        {
-            int count = to.Count;
-
-            for (int i = 0; i < count; i++)
-            {
-                int tagCount = from[i].Tags.Count;
-
-                to[i].TagList = new string[tagCount];
-
-                foreach (var tag in from[i].Tags)
-                    to[i].TagList[--tagCount] = tag.TagId;
-            }
-        }
-        private static void TagListToArray(BlogPost from, BlogPostVM to)
-        {
-            int tagCount = from.Tags?.Count ?? 0;
-
-            to.TagList = new string[tagCount];
-
-            if(from.Tags != null)
-                foreach (var tag in from.Tags)
-                    to.TagList[--tagCount] = tag.TagId;
-        }
-        
+        }  
     }
 }
